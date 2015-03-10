@@ -12,16 +12,26 @@
 	<script type="text/javascript">
 		var chartData = [];
 
+		function getColor(value){
+		    //value from 0 to 1
+		    var hue=((1-value)*120).toString(10);
+		    return ["hsl(",hue,",100%,50%)"].join("");
+		}
+		
 		function drawChart() {
 			chartData = []
 			var ticker = document.request.symbol.value;
-			var url = "http://www.quandl.com/api/v1/datasets/WIKI/"+ticker+".json?column=4&auth_token="
+			var url = "http://www.quandl.com/api/v1/datasets/WIKI/"+ticker+".json?column=4&auth_token=yLkYWzkJzR3_Gzh5NJyQ"
 			$.getJSON( url, function( data ) {
 				
 			  $.each( data["data"], function( key, val ) {
+					var vol = 50;
+					var sent = 50;
 					chartData.unshift({
 						date: new Date(val[0]),
-						value: val[1]
+						value: val[1],
+						volume: vol,
+						barColor: getColor((100-sent)/100)
 					});
 			  });
 			
@@ -33,17 +43,18 @@
 						
 		AmCharts.ready(drawChart)
 
-
 		function createStockChart() {
 			var chart = new AmCharts.AmStockChart();
 			chart.pathToImages = "amcharts/images/";
 
 			// DATASETS //////////////////////////////////////////
 			var dataSet = new AmCharts.DataSet();
-			dataSet.color = "#b0de09";
 			dataSet.fieldMappings = [{
 				fromField: "value",
 				toField: "value"
+			}, {
+				fromField: "volume",
+				toField: "volume"
 			}];
 			dataSet.dataProvider = chartData;
 			dataSet.categoryField = "date";
@@ -60,12 +71,14 @@
 			graph.valueField = "value";
 			graph.bullet = "round";
 			graph.bulletColor = "#FFFFFF";
-			graph.bulletBorderColor = "#00BBCC";
+			graph.bulletBorderColor = "#000000";
 			graph.bulletBorderAlpha = 1;
 			graph.bulletBorderThickness = 2;
 			graph.bulletSize = 7;
 			graph.lineThickness = 2;
-			graph.lineColor = "#00BBCC";
+			graph.lineColor = "#00BB40"
+			graph.negativeLineColor = "#E73E42"
+			graph.useNegativeColorIfDown = true
 			graph.useDataSetColors = false;
 			stockPanel.addStockGraph(graph);
 
@@ -74,8 +87,33 @@
 			stockLegend.markerType = "none";
 			stockPanel.stockLegend = stockLegend;
 			stockPanel.drawingIconsEnabled = true;
-
-			chart.panels = [stockPanel];
+			stockPanel.addStockGraph(graph);
+			
+			var volumePanel = new AmCharts.StockPanel();
+			volumePanel.showCategoryAxis = true;
+			volumePanel.title = "Volume";
+			volumePanel.eraseAll = false;
+			volumePanel.percentHeight = 30;
+			
+			var volumeGraph = new AmCharts.StockGraph();
+			volumeGraph.valueField = "volume";
+			volumeGraph.type = "column";
+			volumeGraph.colorField = "barColor";
+			volumeGraph.fillAlphas = 1;
+			volumeGraph.lineAlpha = 0;
+			volumeGraph.useDataSetColors = false;
+			
+			var volumeLegend = new AmCharts.StockLegend();
+			volumeLegend.valueTextRegular = "";
+			volumeLegend.markerType = "none";
+			volumeLegend.markerSize = 0;
+			volumeLegend.labelText = ""
+			
+			volumePanel.volumeLegend = volumeLegend;
+			volumePanel.drawingIconsEnabled = true;
+			volumePanel.addStockGraph(volumeGraph);
+			
+			chart.panels = [stockPanel, volumePanel]
 
 
 			// OTHER SETTINGS ////////////////////////////////////
