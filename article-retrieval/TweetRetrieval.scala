@@ -1,6 +1,7 @@
 import twitter4j._
 import twitter4j.conf.ConfigurationBuilder
 import scala.collection.JavaConversions._
+import com.github.nscala_time.time.Imports._
  
 object TweetRetrieval { 
 	val consumerKey = "zNlV1WdlTzhmeoRGGSuAUF0SI"
@@ -30,7 +31,8 @@ object TweetRetrieval {
     val result = twitter.search(query)
     val tweets = result.getTweets();
 		for (tweet <- tweets) {
-				println("@" + tweet.getUser().getScreenName() + " - " + tweet.getText());
+				val date = new DateTime(tweet.getCreatedAt()).toString()
+				println(date + " @" + tweet.getUser().getScreenName() + " - " + tweet.getText());
 		}
   }
 }
