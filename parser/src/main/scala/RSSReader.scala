@@ -4,27 +4,18 @@
 
 import scala.xml.XML
 import scala.xml.Elem
+import org.joda.time.DateTime;
 
-object rssReader {
+object RSSReader extends ArticleFetcher {
   //val link = "http://feeds.finance.yahoo.com/rss/2.0/headline?s=appl,ford,msft,ea,fdx,%20gm,%20goog,%20gps,gs,nke,yhoo&region=US&lang=en-US"
   private val xmlfile = new String
-  private var stocks : List[String]= List()
 
 /*
   method for generating the rss feed link
    */
-  private def link : String ={
+  private def link(stock:String): String ={
     var s = "http://finance.yahoo.com/rss/headline?s="
-
-    if(stocks.size == 0) throw error("You haven't added any stocks to request rss feed for");
-
-    val i = stocks.iterator
-
-    while(i.hasNext){
-      s = s ++ i.next() ++ ","
-    }
-
-    s.dropRight(1)
+		return (s+stock)
   }
 
   def getRSSfeed(source : String) :  Elem={
@@ -32,26 +23,6 @@ object rssReader {
     xml
   }
 
-/*
-###### methods for choosing which stocks to get rss feed for
- */
-
-  /*
-  Get stock symbol from here: http://finance.yahoo.com/lookup
-   */
-  def addStock(symbol : String): Unit ={
-    stocks = symbol :: stocks
-  }
-
-  private def remove(symbol: String, list: List[String]) = list diff List(symbol)
-
-  def removeStock(symbol : String) : Unit = {
-    remove(symbol, stocks)
-  }
-
-  def deleteAllStocks = {
-    stocks = List()
-  }
   /*
   #############################################################################################################
 
@@ -88,13 +59,10 @@ object rssReader {
     // return the thing
     result
   }
-
-  def main(args: Array[String]) {
-
-    stocks = List("appl","ford","msft","ea","fdx", "gm", "goog", "gps","gs","nke","yhoo") ::: stocks
+	def getArticles(tickerSymbol: String, stockName: String): List[Result] = {
 
     //getting the xml file
-    val xmlfile = getRSSfeed(link)
+    val xmlfile = getRSSfeed(link(tickerSymbol))
    // println(xmlfile)
 
     //extracting the information required from the rss feed (title, link, and date of each article
@@ -103,11 +71,13 @@ object rssReader {
     // testing the output
     val i = things.iterator
 
+		var results = List[Result]()
+		
     while(i.hasNext) {
-      val (title, link, date) = i.next
-      println(title)
-      println("       "+ link)
-      println("       "+ date)
+			val (title, link, date) = i.next
+      results = (DateTime.parse(date), title, link) :: results
     }
+
+		results
   }
 }
