@@ -22,20 +22,25 @@ import org.xml.sax.SAXException;
 object ArticleRetrieval {
 	def main(args: Array[String]) = {
 		val client = new GuardianContentClient("5q4xyarnabx5jzxr92rch59v")
-		val searchQuery = SearchQuery().q("Google").pageSize(10) // Build a search query of 10 articles about Google
+		val searchQuery = SearchQuery().q("Google").pageSize(1) // Build a search query of 1 article about Google
 		val response = Await.result(client.getResponse(searchQuery), Duration.Inf) // Wait for result to be returned
 		val alchemyObj = AlchemyAPI.GetInstanceFromString("3b90bf78e6b1892aa154ce40a7393d420ea5ee55");
-
 		/** an object to allow additional 'NamedEntity' parameters to be specified during API calls */
 		val entityParams : AlchemyAPI_NamedEntityParams = new AlchemyAPI_NamedEntityParams();
-
 		/** give a sentiment analysis for each entity found in an API query using entityParams */
 		entityParams.setSentiment(true);
 
+		/** parser testing */
+		val parser = new XMLParser(); 
+		println("[XML PARSER TEST]");
 		for (result <- response.results) {
-			println(result.webPublicationDate + " - " + result.webTitle)
-			println(getStringFromDocument(alchemyObj.URLGetRankedNamedEntities(result.webUrl,entityParams)));
+			val articleString = getStringFromDocument(alchemyObj.URLGetRankedNamedEntities(result.webUrl,entityParams));
+			println(articleString);
+			parser.setFile(articleString);
+			val info = parser.getCompanyEntities();
+			for (entity <- info) { println(entity); }
 		}
+
 	}
 	private def getStringFromDocument(doc: Document): String = {
 		val domSource = new DOMSource(doc)
