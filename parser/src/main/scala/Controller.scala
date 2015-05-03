@@ -6,7 +6,7 @@ import scalikejdbc._
 import scalikejdbc.config._
  
 object Controller {
-	val sources = List[ArticleFetcher](ArticleRetrieval, RssReader)
+  val sources = List[ArticleFetcher](ArticleRetrieval, RssReader)
   def main(args : Array[String]) {
 		implicit val session = AutoSession
 		while(true) {
