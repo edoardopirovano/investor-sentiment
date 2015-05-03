@@ -5,11 +5,11 @@ import org.joda.time._
 object Scorer {
 	
 	// Make Article class and companion object with constructor
-	case class Article(id: Long, stock: String, date: DateTime, importance: Int, sentiment: Int)
+	case class Article(id: Long, date: DateTime, importance: Int, sentiment: Int)
 	object Article extends SQLSyntaxSupport[Article] {
 	  override val tableName = "articles"
 	  def apply(rs: WrappedResultSet): Article = new Article(
-	    rs.long("id"), rs.string("stock"), rs.jodaDateTime("date"), rs.int("importance"), rs.int("sentiment"))
+	    rs.long("id"), rs.jodaDateTime("date"), rs.int("importance"), rs.int("sentiment"))
 	}
 	
 	// Recalculate all daily scores for a given stock and update the database
