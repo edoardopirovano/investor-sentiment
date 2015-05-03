@@ -31,7 +31,6 @@ object ArticleProcesser {
 	val sentimentParams = new AlchemyAPI_TargetedSentimentParams();
 	
 	def processArticle(url: String, stock: String): (Int, Int) = { // Importance, sentiment
-		println("stock = "+stock+" in url = "+url);
 		val importance = SiteRank.getPopularity(url);
 		try {
 			val alchemyResult = asXml(alchemyObj.URLGetTargetedSentiment(url,stock,sentimentParams));

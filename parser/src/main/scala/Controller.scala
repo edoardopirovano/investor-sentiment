@@ -6,17 +6,17 @@ import scalikejdbc._
 import scalikejdbc.config._
  
 object Controller {
-	val sources = List[ArticleFetcher](ArticleRetrieval, RSSReader)
+	val sources = List[ArticleFetcher](GuardianReader, RSSReader)
   def main(args : Array[String]) {
 		DBs.setupAll()
 		implicit val session = AutoSession
 		while(true) {
 			println("Beginning refreshing of data.")
-			val stocks = List[(String,String)](("GOOG", "Google"))
+			val stocks = sql"select * from stocks".map(rs => (rs.string("stock"), rs.string("stockname"))).list.apply()
 			for ((ticker, stockName) <- stocks) {
-				println("Searching for articles about " + stocks)
+				println("Searching for articles about " + stockName)
 				for (source <- sources) {
-					println("Searching using " + source.getClass.getName)
+					println("Searching using " + source.getClass)
 					for ((date, title, url) <- source.getArticles(ticker, stockName)) {
 						try {
 							val (importance, sentiment) = ArticleProcesser.processArticle(url, stockName)
@@ -29,7 +29,7 @@ object Controller {
 						}
 					}
 				}
-				scorer.doStock(ticker)
+				Scorer.doStock(ticker)
 			}
 			println("Data refresh complete.")
 			wait(3600)
