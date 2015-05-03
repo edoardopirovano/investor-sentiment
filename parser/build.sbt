@@ -7,6 +7,6 @@ libraryDependencies ++= Seq(
 	"com.gu" %% "content-api-client" % "5.3",               // Guardian API
 	"com.typesafe" % "config" % "1.2.1",                    // Configuration loading
 	"mysql" % "mysql-connector-java" % "5.1.12",            // Database connection
-    "org.scalikejdbc" %% "scalikejdbc"         % "2.2.6",
-    "org.scalikejdbc" %% "scalikejdbc-config"  % "2.2.6"
+	"org.scalikejdbc" %% "scalikejdbc"				 % "2.2.6",
+	"org.scalikejdbc" %% "scalikejdbc-config"	 % "2.2.6"
 )
