@@ -4,51 +4,28 @@ import org.joda.time.DateTime
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 import scala.concurrent.Await
-import com.alchemyapi.api.AlchemyAPI
-import com.alchemyapi.api._
+import scala.xml._;
+import scala.xml.Elem._;
+import scala.xml.Node._;
+import javax.xml.transform.sax.SAXResult;
+import scala.xml.parsing.NoBindingFactoryAdapter;
 import org.xml.sax.SAXException;
-import org.w3c.dom.Document;
-import java.io._;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
+import com.typesafe.config.ConfigFactory;
 
-import org.xml.sax.SAXException;
-
-object ArticleRetrieval {
-	def main(args: Array[String]) = {
-		val client = new GuardianContentClient("5q4xyarnabx5jzxr92rch59v")
-		val searchQuery = SearchQuery().q("Google").pageSize(1) // Build a search query of 1 article about Google
+object ArticleRetrieval extends ArticleFetcher {
+	val conf = ConfigFactory.load();
+	val guardianKey = conf.getString("apikeys.guardian");
+	val alchemyKey = conf.getString("apikeys.alchemy");
+	
+	def getArticles(tickerSymbol: String, stockName: String): List[Result] = {
+		var results = List[Result]()
+		val client = new GuardianContentClient(guardianKey)
+		val searchQuery = SearchQuery().q(stockName).pageSize(1) // Build a search query of 1 article about Google
 		val response = Await.result(client.getResponse(searchQuery), Duration.Inf) // Wait for result to be returned
-		val alchemyObj = AlchemyAPI.GetInstanceFromString("3b90bf78e6b1892aa154ce40a7393d420ea5ee55");
-		/** an object to allow additional 'NamedEntity' parameters to be specified during API calls */
-		val entityParams : AlchemyAPI_NamedEntityParams = new AlchemyAPI_NamedEntityParams();
-		/** give a sentiment analysis for each entity found in an API query using entityParams */
-		entityParams.setSentiment(true);
-
-		/** parser testing */
-		val parser = new XMLParser(); 
-		println("[XML PARSER TEST]");
 		for (result <- response.results) {
-			val articleString = getStringFromDocument(alchemyObj.URLGetRankedNamedEntities(result.webUrl,entityParams));
-			println(articleString);
-			parser.setFile(articleString);
-			val info = parser.getCompanyEntities();
-			for (entity <- info) { println(entity); }
+			results = (result.webPublicationDate, result.webTitle, result.webUrl) :: results
 		}
+		return results
+	}
 
-	}
-	private def getStringFromDocument(doc: Document): String = {
-		val domSource = new DOMSource(doc)
-		val writer = new StringWriter()
-		val result = new StreamResult(writer)
-		val tf = TransformerFactory.newInstance()
-		val transformer = tf.newTransformer()
-		transformer.transform(domSource, result)
-		writer.toString()
-	}
 }
