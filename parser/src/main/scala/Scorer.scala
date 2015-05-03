@@ -28,8 +28,8 @@ object Scorer {
 					sentimenttotal = 0
 					volume = 0
 				}
-				volume += article.importance
-				sentimenttotal += article.importance*article.sentiment
+				volume += article.importance+10
+				sentimenttotal += (article.importance+10)*article.sentiment
 			}
 			val sentiment = sentimenttotal/volume
 			sql"insert into scores(stock,date,sentiment,volume) values (${stock}, ${date}, ${sentiment}, ${volume})".update.apply()
