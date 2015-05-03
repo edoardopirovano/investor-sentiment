@@ -34,7 +34,7 @@ object ArticleProcesser {
 		val importance = SiteRank.getPopularity(url);
 		try {
 			val alchemyResult = asXml(alchemyObj.URLGetTargetedSentiment(url,stock,sentimentParams));
-			return (importance, Math.round((1+getSentimentScore(alchemyResult)).toFloat*50));
+			return (importance, Math.round((1+getSentimentScore(alchemyResult))*50));
 		} catch {
 			case e : Exception => throw new IllegalArgumentException(stock+" couldn't be found in "+url);
 		}
@@ -42,8 +42,8 @@ object ArticleProcesser {
 	}
 	
 	/** finds the sentiment score within the XML document */
-	private def getSentimentScore(file: Node) : Double = {
-		return (file \\ "score")(0).text.toDouble;
+	private def getSentimentScore(file: Node) : Float = {
+		return (file \\ "score")(0).text.toFloat;
 	} 
 	
 	private def asXml(dom: _root_.org.w3c.dom.Node): Node = {
