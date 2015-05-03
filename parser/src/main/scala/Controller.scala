@@ -6,18 +6,21 @@ import scalikejdbc._
 import scalikejdbc.config._
  
 object Controller {
-  val sources = List[ArticleFetcher](ArticleRetrieval, RssReader)
+	val sources = List[ArticleFetcher](ArticleRetrieval, RSSReader)
   def main(args : Array[String]) {
+		DBs.setupAll()
 		implicit val session = AutoSession
 		while(true) {
-			println("Beginning processing of articles.")
+			println("Beginning refreshing of data.")
 			val stocks = List[(String,String)](("GOOG", "Google"))
 			for ((ticker, stockName) <- stocks) {
+				println("Searching for articles about " + stocks)
 				for (source <- sources) {
+					println("Searching using " + source.getClass.getName)
 					for ((date, title, url) <- source.getArticles(ticker, stockName)) {
 						try {
 							val (importance, sentiment) = ArticleProcesser.processArticle(url, stockName)
-							sql"insert into articles(stock,date,source,title,importance,sentiment) values (${ticker}, ${date}, ${url}, ${title}, ${sentiment}, ${importance})".update.apply()
+							sql"insert into articles(stock,date,source,title,importance,sentiment) values (${ticker}, ${date}, ${url}, ${title}, ${importance}, ${sentiment})".update.apply()
 							println("Article successfully added to database.")
 						} catch {
 							case e: IllegalArgumentException => {
@@ -26,12 +29,12 @@ object Controller {
 						}
 					}
 				}
+				scorer.doStock(ticker)
 			}
-			println("Refreshing daily scores.")
-			Scorer.main(Array[String]())
 			println("Data refresh complete.")
 			wait(3600)
 		}
+		DBs.closeAll()
 	}
 	
 	def wait(seconds: Int) {

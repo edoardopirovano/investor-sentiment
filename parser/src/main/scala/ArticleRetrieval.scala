@@ -12,7 +12,7 @@ import scala.xml.parsing.NoBindingFactoryAdapter;
 import org.xml.sax.SAXException;
 import com.typesafe.config.ConfigFactory;
 
-object ArticleRetrieval extends ArticleFetcher {
+object GuardianReader extends ArticleFetcher {
 	val conf = ConfigFactory.load();
 	val guardianKey = conf.getString("apikeys.guardian");
 	val alchemyKey = conf.getString("apikeys.alchemy");
@@ -20,7 +20,7 @@ object ArticleRetrieval extends ArticleFetcher {
 	def getArticles(tickerSymbol: String, stockName: String): List[Result] = {
 		var results = List[Result]()
 		val client = new GuardianContentClient(guardianKey)
-		val searchQuery = SearchQuery().q(stockName).pageSize(1) // Build a search query of 1 article about Google
+		val searchQuery = SearchQuery().q(stockName).pageSize(50) // Build a search query of 50 articles about stock
 		val response = Await.result(client.getResponse(searchQuery), Duration.Inf) // Wait for result to be returned
 		for (result <- response.results) {
 			results = (result.webPublicationDate, result.webTitle, result.webUrl) :: results

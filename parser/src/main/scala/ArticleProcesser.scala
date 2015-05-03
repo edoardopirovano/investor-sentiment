@@ -35,7 +35,6 @@ object ArticleProcesser {
 		val importance = SiteRank.getPopularity(url);
 		try {
 			val alchemyResult = asXml(alchemyObj.URLGetTargetedSentiment(url,stock,sentimentParams));
-			println(alchemyResult);
 			return (importance, Math.round((1+getSentimentScore(alchemyResult)).toFloat*50));
 		} catch {
 			case e : Exception => throw new IllegalArgumentException(stock+" couldn't be found in "+url);

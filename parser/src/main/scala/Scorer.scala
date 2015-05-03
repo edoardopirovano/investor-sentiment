@@ -39,12 +39,4 @@ object Scorer {
 		}
 	}
 	
-  def main(args : Array[String]) {
-		DBs.setupAll()
-		implicit val session = AutoSession
-		val stocks = sql"select stock from stocks".map(rs => rs.string("stock")).list.apply()
-		for (stock <- stocks) doStock(stock)
-		DBs.closeAll()
-	}
-	
 }

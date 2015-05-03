@@ -5,6 +5,7 @@
 import scala.xml.XML
 import scala.xml.Elem
 import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
 
 object RSSReader extends ArticleFetcher {
   //val link = "http://feeds.finance.yahoo.com/rss/2.0/headline?s=appl,ford,msft,ea,fdx,%20gm,%20goog,%20gps,gs,nke,yhoo&region=US&lang=en-US"
@@ -72,10 +73,10 @@ object RSSReader extends ArticleFetcher {
     val i = things.iterator
 
 		var results = List[Result]()
-		
+		val formatter = DateTimeFormat.forPattern("EEE, dd MMM yyyy HH:mm:ss zzz");
     while(i.hasNext) {
 			val (title, link, date) = i.next
-      results = (DateTime.parse(date), title, link) :: results
+      results = (formatter.parseDateTime(date), title, link) :: results
     }
 
 		results
