@@ -23,7 +23,7 @@
 			sentimentData = []
 			chartData = []
 			var ticker = document.request.symbol.value;
-			var stockurl = "http://www.quandl.com/api/v1/datasets/WIKI/"+ticker+".json?column=4&auth_token=yLkYWzkJzR3_Gzh5NJyQ"
+			var stockurl = "https://www.quandl.com/api/v1/datasets/WIKI/"+ticker+".json?column=4&auth_token=yLkYWzkJzR3_Gzh5NJyQ"
 			$.getJSON( stockurl, function( data ) {
 				$.each( data["data"], function( key, val ) {
 					stockData.unshift({
