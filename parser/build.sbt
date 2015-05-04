@@ -8,5 +8,6 @@ libraryDependencies ++= Seq(
 	"com.typesafe" % "config" % "1.2.1",                    // Configuration loading
 	"mysql" % "mysql-connector-java" % "5.1.12",            // Database connection
 	"org.scalikejdbc" %% "scalikejdbc"				 % "2.2.6",
-	"org.scalikejdbc" %% "scalikejdbc-config"	 % "2.2.6"
+	"org.scalikejdbc" %% "scalikejdbc-config"	 % "2.2.6",
+	"com.google.guava" % "guava" % "r08" // Domain name parsing
 )
