@@ -18,7 +18,7 @@ object Scorer {
 	// Recalculate all daily scores for a given stock and update the database
 	def doStock(stock: String)(implicit s: DBSession = AutoSession) = {
 		sql"delete from scores where stock = ${stock}".update.apply()
-		val articles = sql"select * from articles where stock = ${stock} where sentiment is not null order by date".map(rs => Article(rs)).list.apply()
+		val articles = sql"select * from articles where stock = ${stock} and sentiment is not null order by date".map(rs => Article(rs)).list.apply()
 		if (!articles.isEmpty) {
 			var date = articles.head.date
 			var sentimenttotal = 0
