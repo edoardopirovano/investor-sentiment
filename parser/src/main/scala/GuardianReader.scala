@@ -4,12 +4,6 @@ import org.joda.time.DateTime
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 import scala.concurrent.Await
-import scala.xml._;
-import scala.xml.Elem._;
-import scala.xml.Node._;
-import javax.xml.transform.sax.SAXResult;
-import scala.xml.parsing.NoBindingFactoryAdapter;
-import org.xml.sax.SAXException;
 import com.typesafe.config.ConfigFactory;
 
 object GuardianReader extends ArticleFetcher {
