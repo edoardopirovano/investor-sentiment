@@ -1,3 +1,0 @@
-twitter_consumer_key='YOUR_TWITTER_CONSUMER_KEY' 
-twitter_consumer_secret='YOUR_TWITTER_CONSUMER_SECRET'
-alchemy_apikey='YOUR_ALCHEMY_API_KEY'
