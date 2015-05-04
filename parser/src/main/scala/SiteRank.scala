@@ -2,17 +2,19 @@ import scala.xml.XML
 import scala.collection.mutable.HashMap
 import java.net.URLEncoder
 import com.github.john_kurkowski.tldextract._
+import com.typesafe.config.ConfigFactory
 
 object SiteRank {
+	val conf = ConfigFactory.load()
+	val lowerBound = conf.getInt("siterank.lowerBound")
+	val upperBound = conf.getInt("siterank.upperBound")
 	val cache = HashMap(
 		"yahoo.com" -> 5000
 	)
 	private def rankToPopularity(rank: Int): Int = {
-		val lower = 10
-		val upper = 10000
-		if (rank < lower) return 100
-		if (rank > upper) return 0
-		return Math.round(((upper-rank).toFloat/(upper-lower))*100)
+		if (rank < lowerBound) return 100
+		if (rank > upperBound) return 0
+		return Math.round(((upperBound-rank).toFloat/(upperBound-lowerBound))*100)
 	}
   def getPopularity(url: String):Int = {
 		var root = url
