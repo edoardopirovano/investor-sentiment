@@ -26,6 +26,7 @@ object Controller {
 						} catch {
 							case e: IllegalArgumentException => {
 								println("Article could not be parsed to extract a sentiment score.")
+								sql"insert into articles(stock,date,source,title) values (${ticker}, ${date}, ${url}, ${title})".update.apply()
 							}
 						}
 					}
