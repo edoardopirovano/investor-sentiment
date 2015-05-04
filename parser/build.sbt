@@ -1,5 +1,8 @@
 scalaVersion := "2.11.6"
 
+javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint")
+scalacOptions += "-target:jvm-1.8"
+
 libraryDependencies ++= Seq(
 	"org.slf4j" % "slf4j-simple" % "1.6.4",                 // General logging
 	"com.github.nscala-time" %% "nscala-time" % "2.0.0", 	// Date/time handling
