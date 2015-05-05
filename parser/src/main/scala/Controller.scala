@@ -6,7 +6,7 @@ import scalikejdbc._
 import scalikejdbc.config._
  
 object Controller {
-	val sources = List[ArticleFetcher](GuardianReader, RSSReader, BingSearch)
+	val sources = List[ArticleFetcher](GuardianReader, RSSReader, BingSearch, FarooSearch)
   def main(args : Array[String]) {
 		DBs.setupAll()
 		implicit val session = AutoSession
