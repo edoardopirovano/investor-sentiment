@@ -13,5 +13,7 @@ libraryDependencies ++= Seq(
 	"mysql" % "mysql-connector-java" % "5.1.12",            // Database connection
 	"org.scalikejdbc" %% "scalikejdbc"				 % "2.2.6",
 	"org.scalikejdbc" %% "scalikejdbc-config"	 % "2.2.6",
-	"com.google.guava" % "guava" % "r08" // Domain name parsing
+	"com.google.guava" % "guava" % "r08", // Domain name parsing
+	"commons-codec" % "commons-codec" % "1.9",
+	"com.google.code.gson" % "gson" % "1.7.1"
 )
