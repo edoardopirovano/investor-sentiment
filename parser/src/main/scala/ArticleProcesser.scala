@@ -26,14 +26,14 @@ object ArticleProcesser {
 	val sentimentParams = new AlchemyAPI_TargetedSentimentParams();
 	
 	def processArticle(url: String, stock: String): (Int, Int) = { // Importance, sentiment
-		val importance = SiteRank.getPopularity(url);
+		if (url contains "video") throw new IllegalArgumentException(url+" is a video")
 		try {
 			val alchemyResult = asXml(alchemyObj.URLGetTargetedSentiment(url,stock,sentimentParams));
+			val importance = SiteRank.getPopularity(url);
 			return (importance, Math.round((1+getSentimentScore(alchemyResult))*50));
 		} catch {
 			case e : Exception => throw new IllegalArgumentException(stock+" couldn't be found in "+url);
 		}
-
 	}
 	
 	/** finds the sentiment score within the XML document */
