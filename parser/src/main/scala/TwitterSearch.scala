@@ -5,7 +5,7 @@ import com.github.nscala_time.time.Imports._
 import com.typesafe.config.ConfigFactory
 import java.util.Date
  
-object TweetFetcher { 
+object TwitterSearch { 
 	val conf = ConfigFactory.load()
 	val consumerKey = conf.getString("apikeys.twitterConsumer")
 	val consumerSecret = conf.getString("apikeys.twitterSecret")

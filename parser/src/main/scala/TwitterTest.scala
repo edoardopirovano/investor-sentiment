@@ -3,7 +3,7 @@ object TwitterTest {
 	def main(args : Array[String]) {
 		    // some runnable test code
 		    val query = "Google"
-		    val tweetData = TweetFetcher.getTweets(query)
+		    val tweetData = TwitterSearch.getTweets(query)
 		    var i = 0
 		    for (datum <- tweetData) {
 		    	try {
