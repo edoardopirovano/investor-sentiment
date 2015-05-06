@@ -49,8 +49,8 @@
 								date: stockData[i]["date"],
 								value: stockData[i]["value"],
 								volume: "N/A",
-								barColor: null,
-								description: null
+								barColor: null
+								//description: null
 							});
 							i -= 1
 						} else if (i < 0 || stockData[i]["date"] < sentimentData[j]["date"]) {
@@ -58,8 +58,8 @@
 								date: sentimentData[j]["date"],
 								value: "N/A",
 								volume: sentimentData[j]["volume"],
-								barColor: getColor((100-sentimentData[j]["sentiment"])/100),
-								description: sentimentData[j]["sentiment"]
+								barColor: getColor((100-sentimentData[j]["sentiment"])/100)
+								//description: sentimentData[j]["sentiment"]
 							});
 							j -= 1
 						} else {
@@ -67,8 +67,8 @@
 								date: stockData[i]["date"],
 								value: stockData[i]["value"],
 								volume: sentimentData[j]["volume"],
-								barColor: getColor((100-sentimentData[j]["sentiment"])/100),
-								description: sentimentData[j]["sentiment"]
+								barColor: getColor((100-sentimentData[j]["sentiment"])/100)
+								//description: sentimentData[j]["sentiment"]
 							});
 							i -= 1
 							j -= 1
