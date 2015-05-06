@@ -18,12 +18,11 @@ import javax.xml.transform.stream.StreamResult;
 
 
 /** a class to extract tag data from XML files from a given list of tags */
-object ArticleProcesser {
+object ArticleProcessor {
 	val conf = ConfigFactory.load();	
 	val alchemyKey = conf.getString("apikeys.alchemy");
 	val alchemyObj = AlchemyAPI.GetInstanceFromString(alchemyKey);
-	// defines params
-	val sentimentParams = new AlchemyAPI_TargetedSentimentParams();
+	val sentimentParams = new AlchemyAPI_TargetedSentimentParams(); // a paramter object 
 	
 	def processArticle(url: String, stock: String): (Int, Int) = { // Importance, sentiment
 		if (url contains "video") throw new IllegalArgumentException(url+" is a video")
@@ -37,11 +36,11 @@ object ArticleProcesser {
 	}
 	
 	/** finds the sentiment score within the XML document */
-	private def getSentimentScore(file: Node) : Float = {
+	def getSentimentScore(file: Node) : Float = {
 		return (file \\ "score")(0).text.toFloat;
 	} 
 	
-	private def asXml(dom: _root_.org.w3c.dom.Node): Node = {
+	def asXml(dom: _root_.org.w3c.dom.Node): Node = {
 	  val source = new DOMSource(dom)
 	  val adapter = new NoBindingFactoryAdapter
 	  val saxResult = new SAXResult(adapter)

@@ -22,7 +22,7 @@ object Controller {
 					for ((date, title, url) <- source.getArticles(ticker, stockName) if !(urls contains url)) {
 						urls = url :: urls
 						try {
-							val (importance, sentiment) = ArticleProcesser.processArticle(url, stockName)
+							val (importance, sentiment) = ArticleProcessor.processArticle(url, stockName)
 							sql"insert into articles(stock,date,source,title,importance,sentiment) values (${ticker}, ${date}, ${url}, ${title}, ${importance}, ${sentiment})".update.apply()
 							println("Article successfully added to database.")
 						} catch {
