@@ -8,13 +8,16 @@ object SiteRank {
 	val conf = ConfigFactory.load()
 	val lowerBound = conf.getInt("siterank.lowerBound")
 	val upperBound = conf.getInt("siterank.upperBound")
-	val cache = HashMap(
-		"yahoo.com" -> 5000
-	)
+	var cache:HashMap[String, Int] = null
 	private def rankToPopularity(rank: Int): Int = {
 		if (rank < lowerBound) return 100
 		if (rank > upperBound) return 0
 		return Math.round(((upperBound-rank).toFloat/(upperBound-lowerBound))*100)
+	}
+	def purgeCache() = {
+		cache = HashMap(
+			"yahoo.com" -> 5000
+		)
 	}
   def getPopularity(url: String):Int = {
 		var root = url

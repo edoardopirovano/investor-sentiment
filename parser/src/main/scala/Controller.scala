@@ -12,6 +12,7 @@ object Controller {
 		implicit val session = AutoSession
 		while(true) {
 			println("Beginning refreshing of data.")
+			SiteRank.purgeCache()
 			val stocks = sql"select * from stocks".map(rs => (rs.string("stock"), rs.string("stockname"))).list.apply()
 			for ((ticker, stockName) <- stocks) {
 				val urls = sql"select source from articles where stock = ${ticker}".map(rs => rs.string("source")).list.apply()
@@ -31,6 +32,7 @@ object Controller {
 						}
 					}
 				}
+				println("Recalculating stock scores.")
 				Scorer.doStock(ticker)
 			}
 			println("Data refresh complete.")
