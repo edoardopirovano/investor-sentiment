@@ -2,7 +2,7 @@ import org.joda.time.DateTime
 import com.typesafe.config.ConfigFactory
 import search.web.FarooSearcher
 
-object FarooSearch extends ArticleFetcher {
+object FarooSearch extends ArticleSearcher {
 	val conf = ConfigFactory.load();
 	val farooKey = conf.getString("apikeys.faroo");
 	val limit = conf.getInt("limits.faroo");

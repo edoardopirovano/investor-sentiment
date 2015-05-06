@@ -2,7 +2,7 @@ import org.joda.time.DateTime
 import com.typesafe.config.ConfigFactory
 import search.web.BingSearcher
 
-object BingSearch extends ArticleFetcher {
+object BingSearch extends ArticleSearcher {
 	val conf = ConfigFactory.load();
 	val bingKey = conf.getString("apikeys.bing");
 	val limit = conf.getInt("limits.bing");

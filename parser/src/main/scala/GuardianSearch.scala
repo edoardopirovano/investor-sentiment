@@ -6,7 +6,7 @@ import scala.concurrent.duration._
 import scala.concurrent.Await
 import com.typesafe.config.ConfigFactory;
 
-object GuardianReader extends ArticleFetcher {
+object GuardianSearch extends ArticleSearcher {
 	val conf = ConfigFactory.load();
 	val guardianKey = conf.getString("apikeys.guardian");
 	val alchemyKey = conf.getString("apikeys.alchemy");

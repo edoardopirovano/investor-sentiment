@@ -7,7 +7,7 @@ import scala.xml.Elem
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 
-object RSSReader extends ArticleFetcher {
+object YFSearch extends ArticleSearcher {
   //val link = "http://feeds.finance.yahoo.com/rss/2.0/headline?s=appl,ford,msft,ea,fdx,%20gm,%20goog,%20gps,gs,nke,yhoo&region=US&lang=en-US"
   private val xmlfile = new String
 
