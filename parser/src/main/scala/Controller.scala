@@ -15,11 +15,12 @@ object Controller {
 			SiteRank.purgeCache()
 			val stocks = sql"select * from stocks".map(rs => (rs.string("stock"), rs.string("stockname"))).list.apply()
 			for ((ticker, stockName) <- stocks) {
-				val urls = sql"select source from articles where stock = ${ticker}".map(rs => rs.string("source")).list.apply()
+				var urls = sql"select source from articles where stock = ${ticker}".map(rs => rs.string("source")).list.apply()
 				println("Searching for articles about " + stockName)
 				for (source <- sources) {
 					println("Searching using " + source.getClass)
 					for ((date, title, url) <- source.getArticles(ticker, stockName) if !(urls contains url)) {
+						urls = url :: urls
 						try {
 							val (importance, sentiment) = ArticleProcesser.processArticle(url, stockName)
 							sql"insert into articles(stock,date,source,title,importance,sentiment) values (${ticker}, ${date}, ${url}, ${title}, ${importance}, ${sentiment})".update.apply()
