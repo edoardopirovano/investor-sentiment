@@ -10,7 +10,7 @@ object GuardianReader extends ArticleFetcher {
 	val conf = ConfigFactory.load();
 	val guardianKey = conf.getString("apikeys.guardian");
 	val alchemyKey = conf.getString("apikeys.alchemy");
-	val numArticles = conf.getInt("guardian.numArticles");
+	val numArticles = conf.getInt("limits.guardian");
 	
 	def getArticles(tickerSymbol: String, stockName: String): List[Result] = {
 		var results = List[Result]()
