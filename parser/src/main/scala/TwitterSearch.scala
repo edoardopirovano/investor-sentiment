@@ -29,7 +29,7 @@ object TwitterSearch {
     val twitter = tf.getInstance()
     val tweetLimit = conf.getString("limits.tweets").toInt; // tweets per query
 
-   // returns an array of (search query, tweet text, date, retweets, favourites) for each tweet found
+   // returns an array of tweet objects that are confirmed to be written in English (for the AlchemyAPI)
    def getTweets(entity : String) : Array[Status] = {
    		val data = new Array[Status](tweetLimit)
    		val query = new Query(entity); query.setCount(tweetLimit)
@@ -38,13 +38,12 @@ object TwitterSearch {
    			val tweets = result.getTweets()
    			var i = 0
    			for (tweet <- tweets) {
-   				data(i) = tweet
-   				i += 1
+          if (tweet.getLang() == "en") data(i) = tweet; i += 1
    			}
    		} catch {
    			case e : Exception => throw new TwitterException("Couldn't connect to Twitter API")
    		}
    		return data
    }
-
+   
 }

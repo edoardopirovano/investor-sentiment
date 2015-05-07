@@ -18,34 +18,43 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.util.Date
 
+/** tweets are passed to the AlchemyAPI by text */
+
 object TweetProcessor {
 	val conf = ConfigFactory.load();	
 	val alchemyKey = conf.getString("apikeys.alchemy");
 	val alchemyObj = AlchemyAPI.GetInstanceFromString(alchemyKey);
 	val sentimentParams = new AlchemyAPI_TargetedSentimentParams(); // a parameter object 
+	var tweet : Status = null.asInstanceOf[Status]
+	var query : String = ""
 
-	// https://twitter.com/[screen name of user]/status/[id of status] 
-	
-	// returns (sentiment score, popularity score)
-	def processTweet(tweet : Status, query : String) : (Int,Int) = {
-		val url = "http://twitter.com/"+ tweet.getUser().getScreenName() + "/status/" + tweet.getId()
-		val retweets = tweet.getRetweetCount()
-		val favorites = tweet.getFavoriteCount()
-		return (getSentimentScore(url,query),getPopularityScore(retweets,favorites))
+	/** returns the URL of a tweet
+	  * https://twitter.com/[screen name of user]/status/[id of status] 
+	  */
+	def getTweetUrl(tweet : Status) : String = {
+		return "http://twitter.com/"+ tweet.getUser().getScreenName() + "/status/" + tweet.getId()
 	}
 
-	/////////////////////////////////////////////////////////
-	/******************** NEEDS FIXING *********************/
-	/****  i.e. different AlchemyObj method and params  ****/
-	/////////////////////////////////////////////////////////
+	/** returns the creation date for a tweet */
+	def getTweetDate(tweet : Status) : Date = {
+		return tweet.getCreatedAt()
+	}
 
-	private def getSentimentScore(url : String, query : String) : Int = {
+	/* returns (sentiment score, popularity score) */
+	def processTweet(tweet : Status, query : String) : (Int,Int) = {
+		this.tweet = tweet; this.query = query;
+		return (getSentimentScore(), getPopularityScore())
+	}
+
+	private def getSentimentScore() : Int = {
+		val url = getTweetUrl(tweet)
+		val text = tweet.getText()
 		try {
-			val alchemyResult = ArticleProcessor.asXml(alchemyObj.URLGetTargetedSentiment(url,query,sentimentParams));
+			val alchemyResult = ArticleProcessor.asXml(alchemyObj.TextGetTargetedSentiment(text,query,sentimentParams));
 			val importance = SiteRank.getPopularity(url);
 			return Math.round((1+ArticleProcessor.getSentimentScore(alchemyResult))*50);
 		} catch {
-			case e : Exception => throw new IllegalArgumentException(query+" couldn't be found in "+url);
+			case e : Exception => throw new IllegalArgumentException(query+" couldn't be found in :"+ url);
 		}
 	}
 
@@ -53,7 +62,10 @@ object TweetProcessor {
 	/******************** TO DO *********************/
 	//////////////////////////////////////////////////
 
-	private def getPopularityScore(retweets : Int, favorites : Int) : Int = {
-		return 1 // temporary def
+	private def getPopularityScore() : Int = {
+		val retweets = tweet.getRetweetCount()
+		val favorites = tweet.getFavoriteCount()
+		// to do ...
+		return 1 // temporary
 	}
 }
