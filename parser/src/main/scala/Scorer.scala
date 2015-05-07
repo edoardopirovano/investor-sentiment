@@ -36,6 +36,10 @@ object Scorer {
 			}
 			val sentiment = sentimenttotal/volume
 			sql"insert into scores(stock,date,sentiment,volume) values (${stock}, ${date}, ${sentiment}, ${volume})".update.apply()
+			
+			//////////////////////////////////////////////////////
+			/******     USE TWEET DATA HERE SOMEHOW ********/
+			//////////////////////////////////////////////////////
 		}
 	}
 	

@@ -35,6 +35,35 @@ object Controller {
 				}
 				println("Recalculating stock scores.")
 				Scorer.doStock(ticker)
+			/** Code to integrate the TwitterSearch for each stock /
+			
+			// to avoid duplicate tweets
+			val tweetIDS = sql"select tweetID from tweets where stock =${ticker}".map(v => v.string("tweetID").list.apply())
+			println("Searching for tweets about " + stockName)
+			val tweets = TwitterSearch.getTweets(stockName)
+			for (tweet <- tweets) {
+				val id = TwitterProcessor.getTweetID(tweet)
+				if (!(tweetIDS contains id)) {
+					tweetIDS := id
+					val url = TwitterProcessor.getTweetUrl(tweet)
+					try {
+						val (sentiment,popularity) = TwitterProcessor.processTweet(tweet,stockName)
+						val importance = TwitterProcessor.getTweetImportance(tweet)
+						val text = TwitterProcessor.getTweetText(tweet)
+						val date = TwitterProcessor.getTweetDate(tweet)
+						sql"insert into tweets(stock,date,source,text,importance,sentiment) values (${ticker}, ${date}, ${url}, ${text}, ${importance}, ${sentiment})".update.apply()
+						println("Article successfully added to database.")
+					} catch {
+						case e : Exception => {
+							println("Tweet could not be parsed to extract a sentiment score.")
+							sql"insert into tweets(stock,date,source,text) values (${ticker}, ${date}, ${url}, ${text})".update.apply()
+						}
+					}
+				}
+			}
+			println("Recalculating stock scores.")
+			Scorer.doStock(ticker)	// this can replace the earlier call in the for loop
+			/*******************************************************/
 			}
 			println("Data refresh complete.")
 			wait(3600)

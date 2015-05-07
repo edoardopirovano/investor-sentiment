@@ -35,6 +35,11 @@ object TweetProcessor {
 		return "http://twitter.com/"+ tweet.getUser().getScreenName() + "/status/" + tweet.getId()
 	}
 
+	/** returns the ID of a tweet */
+	def getTweetID(tweet : Status) : Long = {
+		return tweet.getId()
+	}
+
 	/** returns the creation date for a tweet */
 	def getTweetDate(tweet : Status) : Date = {
 		return tweet.getCreatedAt()
@@ -61,6 +66,14 @@ object TweetProcessor {
 	//////////////////////////////////////////////////
 	/******************** TO DO *********************/
 	//////////////////////////////////////////////////
+
+
+	// could base this on the number of followers of that particular User?
+	def getTweetImportance(tweet: Status) : Int = {	
+		// to do ...
+		return 1 // temporary
+	}
+
 
 	private def getPopularityScore() : Int = {
 		val retweets = tweet.getRetweetCount()
