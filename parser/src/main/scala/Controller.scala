@@ -4,6 +4,7 @@ import scala.concurrent.Await
 import scala.concurrent.Future
 import scalikejdbc._
 import scalikejdbc.config._
+import org.joda.time.DateTime
  
 object Controller {
 	val sources = List[ArticleSearcher](GuardianSearch, YFSearch, BingSearch, FarooSearch)
@@ -19,7 +20,15 @@ object Controller {
 				println("Searching for articles about " + stockName)
 				for (source <- sources) {
 					println("Searching using " + source.getClass)
-					for ((date, title, url) <- source.getArticles(ticker, stockName) if !(urls contains url)) {
+					var articles = List[(DateTime, String, String)]()
+					try {
+						articles = source.getArticles(ticker, stockName)
+					} catch {
+						case e: Exception => {
+							println("Articles count not be retrieved at this time.")
+						}
+					}
+					for ((date, title, url) <- articles if !(urls contains url)) {
 						urls = url :: urls
 						try {
 							val (importance, sentiment) = ArticleProcessor.processArticle(url, stockName)
@@ -63,7 +72,7 @@ object Controller {
 			}
 			println("Recalculating stock scores.")
 			Scorer.doStock(ticker)	// this can replace the earlier call in the for loop
-			/*******************************************************/
+			*******************************************************/
 			}
 			println("Data refresh complete.")
 			wait(3600)

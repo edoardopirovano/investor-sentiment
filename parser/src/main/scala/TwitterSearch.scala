@@ -37,7 +37,7 @@ object TwitterSearch {
    			val result = twitter.search(query)
    			val tweets = result.getTweets()
    			var i = 0
-   			for (tweet <- tweets) {]
+   			for (tweet <- tweets) {
           if (tweet.getLang() == "en") data(i) = tweet; i += 1
    			}
    		} catch {
