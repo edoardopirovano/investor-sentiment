@@ -89,6 +89,13 @@ object Controller {
 						}
 					}
 				}
+				// clean up directory
+				val entries = dir.list();
+					for (s <- entries) {
+    				var currentFile = new File(dir.getPath(),s);
+    				currentFile.delete();
+				}
+				dir.delete()
 			}
 
 			/** Article and Twitter processing in parallel */
@@ -98,15 +105,6 @@ object Controller {
 					SiteRank.purgeCache()
 
 					(processArticles || processTweets)()
-					
-					// clean up directory
-					val entries = dir.list();
-						for (s <- entries) {
-    					var currentFile = new File(dir.getPath(),s);
-    					currentFile.delete();
-					}
-
-					dir.delete()
 					
 					println("\n[SYSTEM] Finished data refresh.")
 					println("\n[SYSTEM] System thread sleeping for 60 mins")
