@@ -19,12 +19,21 @@ object Controller {
 			val f = Future { Thread.sleep(seconds*1000) }
 			Await.result(f, Duration.Inf)
 	}
+	/** recursively deletes the directory tmp/ */
+	def cleanUpDirectory() {
+			val entries = dir.list();
+				for (s <- entries) {
+    			var currentFile = new File(dir.getPath(),s);
+    			currentFile.delete();
+			}
+			dir.delete()
+	}
 
   	def main(args : Array[String]) {
 			val stocks = sql"select * from stocks".map(rs => (rs.string("stock"), rs.string("stockname"))).list.apply()
 
 			val dir = new File("tmp")
-			assert(!dir.exists,"[ERROR] Delete the /tmp directory before running.") // if the Controller fails to clean up
+			if (dir.exists()) { cleanUpDirectory() } // prevents old data being reused if it wasn't properly deleted
 			dir.mkdir()
 			
 			var companies : List[String] = List() ; for ((ticker,stockname) <- stocks) {companies = stockname :: companies}
@@ -89,13 +98,7 @@ object Controller {
 						}
 					}
 				}
-				// clean up directory
-				val entries = dir.list();
-					for (s <- entries) {
-    				var currentFile = new File(dir.getPath(),s);
-    				currentFile.delete();
-				}
-				dir.delete()
+				cleanUpDirectory()
 			}
 
 			/** Article and Twitter processing in parallel */
