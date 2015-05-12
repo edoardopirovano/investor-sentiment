@@ -107,8 +107,8 @@ object Controller {
 					(processArticles || processTweets)()
 					
 					println("\n[SYSTEM] Finished data refresh.")
-					println("\n[SYSTEM] System thread sleeping for 60 mins")
-					wait(3600) 
+					println("\n[SYSTEM] System thread sleeping for 30 mins")
+					wait(1800) 
 				}
 			}
 		System()
