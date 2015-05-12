@@ -108,7 +108,7 @@ object Controller {
 
 					dir.delete()
 					
-					println("\n\[SYSTEM] Finished data refresh.")
+					println("\n[SYSTEM] Finished data refresh.")
 					println("\n[SYSTEM] System thread sleeping for 60 mins")
 					wait(3600) 
 				}
