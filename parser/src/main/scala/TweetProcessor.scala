@@ -193,8 +193,8 @@ object TweetProcessor {
 
 	// could base this on the number of followers of that particular User?
 	def getTweetImportance(tweet: Status) : Int = {
-		val upperBound = 100 //The range of outputs: 0 - 100
-		val maxFollowers = 100000	//max Number of Followers
+		val upperBound = conf.getString("limits.maxTweetImporance").toInt; //The range of outputs: 0 - 100
+		val maxFollowers = conf.getString("limits.maxFollowers").toInt;	//max Number of Followers
 		val followers = tweet.getUser().getFollowersCount()
 		var tweetImportance = upperBound * followers/maxFollowers
 		if(x > 100){
@@ -205,9 +205,9 @@ object TweetProcessor {
 
 
 	def getTweetPopularity(tweet : Status) : Int = {
-		val upperBound = 100
-		val maxRetweets = 100000
-		val maxFavorites = 100000
+		val upperBound = conf.getString("limits.maxTweetPopularity").toInt;
+		val maxRetweets = conf.getString("limits.maxRetweets").toInt;
+		val maxFavorites = conf.getString("limits.maxTweetPopularity").toInt;
 
 		val retweets = tweet.getRetweetCount()
 		val favorites = tweet.getFavoriteCount()
