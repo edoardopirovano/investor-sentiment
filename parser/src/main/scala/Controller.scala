@@ -14,6 +14,7 @@ object Controller {
 	DBs.setupAll()
 	implicit val session = AutoSession
 	val sources = List[ArticleSearcher](GuardianSearch, YFSearch, BingSearch, FarooSearch)
+	val dir = new File("tmp") // the (temporary) directory used by the tweet processor
 	
 	def wait(seconds: Int) {
 			val f = Future { Thread.sleep(seconds*1000) }
@@ -30,10 +31,11 @@ object Controller {
 	}
 
   	def main(args : Array[String]) {
+  			var articlesAdded , tweetsAdded = 0
+
 			val stocks = sql"select * from stocks".map(rs => (rs.string("stock"), rs.string("stockname"))).list.apply()
 
-			val dir = new File("tmp")
-			if (dir.exists()) { cleanUpDirectory() } // prevents old data being reused if it wasn't properly deleted
+			if (dir.exists()) { cleanUpDirectory() } // prevents old data being reused if it wasn't properly deleted	
 			dir.mkdir()
 			
 			var companies : List[String] = List() ; for ((ticker,stockname) <- stocks) {companies = stockname :: companies}
@@ -59,6 +61,7 @@ object Controller {
 							val (importance, sentiment) = ArticleProcessor.processArticle(url, stockName)
 							sql"insert into articles(stock,date,source,title,importance,sentiment) values (${ticker}, ${date}, ${url}, ${title}, ${importance}, ${sentiment})".update.apply()
 							println("\n[DATABASE] Article successfully added to database.")
+							articlesAdded += 1
 						} catch {
 							case e: IllegalArgumentException => {
 								println("\n[ERROR] Article could not be parsed to extract a sentiment score.")
@@ -92,6 +95,7 @@ object Controller {
 							try {
 								sql"insert into tweets(tweetID, stock,date,source,text,importance,sentiment) values (${id}, ${stock}, ${date}, ${url}, ${text}, ${importance}, ${score})".update.apply()
 								println("\n[DATABASE] Tweet "+id+" successfully added to database.")
+								tweetsAdded += 1
 							} catch {
 								case e : Exception => println("\n[ERROR] Tweet couldn't be added to the database")
 							}
@@ -104,13 +108,14 @@ object Controller {
 			/** Article and Twitter processing in parallel */
 			val System : PROC = {
 				repeat {
+					articlesAdded = 0; tweetsAdded = 0
 					println("[SYSTEM] Beginning data refresh.")
 					SiteRank.purgeCache()
 
 					(processArticles || processTweets)()
 					
-					println("\n[SYSTEM] Finished data refresh.")
-					println("\n[SYSTEM] System thread sleeping for 30 mins")
+					println("\n[SYSTEM] Data refresh completed : "+articlesAdded+" articles and "+tweetsAdded+" tweets successfully scored and stored.")
+					println("\n[SYSTEM] System thread sleeping for 30 mins...")
 					wait(1800) 
 				}
 			}
